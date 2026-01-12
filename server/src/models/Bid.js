@@ -12,10 +12,23 @@ const BidSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    message: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "hired", "rejected"],
+      default: "pending",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Bid", BidSchema);
+export default mongoose.model("Bid", BidSchema);

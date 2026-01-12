@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 const protect = async (req, res, next) => {
-  const token = req.cookie.token;
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).json({ success: true, message: "Not authorized" });
@@ -18,4 +18,3 @@ const protect = async (req, res, next) => {
 };
 
 export default protect;
-git push -u origin main

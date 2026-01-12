@@ -38,7 +38,7 @@ export const  getOpenGigs = async(req,res)=>{
     }
 
     const gigs = await Gig.find(query)
-    .populate("ownedId","name email")
+    .populate("ownerId","name email")
     .sort({createdAt:-1})
 
     res.json(gigs);

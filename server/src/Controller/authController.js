@@ -1,11 +1,11 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
-const generateToken= async(userId)=>{
+const generateToken = async (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-}
+    expiresIn: "7d",
+  });
+};
 
 export const registerUser = async (req, res) => {
   try {
@@ -25,12 +25,12 @@ export const registerUser = async (req, res) => {
     user = new User({ name, email, password });
     await user.save();
 
-    const token = await generateToken(user._id)
+    const token = await generateToken(user._id);
 
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false, 
+        secure: false,
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
@@ -67,7 +67,7 @@ export const loginUser = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    const token = generateToken(user._id);
+    const token = await generateToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
