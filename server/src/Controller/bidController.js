@@ -1,5 +1,6 @@
 import Bid from "../models/Bid.js";
 import Gig from "../models/Gig.js";
+import mongoose from "mongoose";
 
 export const createBid = async (req, res) => {
   try {
@@ -57,7 +58,7 @@ export const createBid = async (req, res) => {
 
 export const getBidsForGig = async (req, res) => {
   try {
-    const {gigId} = req.params;
+    const { gigId } = req.params;
     console.log(gigId);
 
     if (!gigId) {
@@ -94,5 +95,56 @@ export const getBidsForGig = async (req, res) => {
       success: false,
       message: "Internal server error",
     });
+  }
+};
+
+export const hiredBid = async (req, res) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const { bidId } = req.params;
+
+    const bid = await Bid.findById(bidId).session(session);
+    if (!bid) {
+      throw new Error("Bid not found");
+    }
+
+    const gig = await Gig.findById(bid.gigId).session(session);
+    if (!gig) {
+      throw new Error("Gig not found");
+    }
+
+    if (gig.ownerId.toString() !== req.user._id.toString()) {
+      throw new Error("Not authorized this gig");
+    }
+
+    if (gig.status !== "open") {
+      throw new Error("Gig is already assigned");
+    }
+
+    gig.status = "assigned";
+    await gig.save({ session });
+
+    bid.status = "hired";
+    await bid.save({ session });
+
+    await Bid.updateMany(
+      {
+        gigId: gig._id,
+        _id: { $ne: bid._id },
+      },
+      { status: "rejected" },
+      { session }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    res.json({ message: "Freelancer hired successfully" });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    res.status(400).json({ message: error.message });
+  } finally {
+    session.endSession();
   }
 };
