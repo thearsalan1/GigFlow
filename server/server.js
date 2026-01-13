@@ -5,7 +5,7 @@ import cors from "cors";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import gigRoutes from "./src/routes/gigRoutes.js";
-import bidRoutes from "./src/routes/bidRoutes.js"
+import bidRoutes from "./src/routes/bidRoutes.js";
 
 dotenv.config();
 
@@ -22,7 +22,7 @@ app.get("/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/gigs", gigRoutes);
-app.use("/api/bids",bidRoutes)
+app.use("/api/bids", bidRoutes);
 
 connectDB();
 const PORT = process.env.PORT || 5000;
