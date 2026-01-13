@@ -30,8 +30,8 @@ export const registerUser = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: process.env.NODE_ENV === "production" ? true : false,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .status(201)
@@ -70,8 +70,8 @@ export const loginUser = async (req, res) => {
     const token = await generateToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -87,5 +87,25 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const logout = (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production" ? true : false,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Logout failed",
+    });
   }
 };

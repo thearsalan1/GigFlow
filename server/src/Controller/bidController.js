@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 export const createBid = async (req, res) => {
   try {
     const { gigId, message, price } = req.body;
+    console.log(req.body);
 
     if (!gigId || !message || !price) {
       return res
@@ -59,7 +60,6 @@ export const createBid = async (req, res) => {
 export const getBidsForGig = async (req, res) => {
   try {
     const { gigId } = req.params;
-    console.log(gigId);
 
     if (!gigId) {
       return res.status(400).json({
