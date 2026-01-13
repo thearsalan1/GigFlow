@@ -12,7 +12,9 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(
+  cors({ credentials: true, origin: "https://gig-flow-three.vercel.app" })
+);
 app.use(express.json());
 app.use(cookieParser());
 
