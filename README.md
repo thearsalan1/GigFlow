@@ -1,178 +1,174 @@
-# GigFlow – Full Stack Development Assignment (Backend)
+# GigFlow – Full Stack Freelance Marketplace
 
-GigFlow is a mini freelance marketplace platform built as part of a Full Stack Development Internship assignment. The platform allows users to post gigs (jobs), submit bids, and securely hire freelancers using atomic database transactions.
+## 📌 Assignment Overview
 
-This repository currently focuses on the **backend implementation**, designed with production-grade architecture, secure authentication, and robust data integrity.
+GigFlow is a full‑stack freelance gig marketplace built as part of the given assignment. The platform allows clients to post gigs, freelancers to place bids, and clients to hire freelancers using an **atomic and race‑condition‑safe hiring flow**.
+
+The project focuses on:
+
+* Secure authentication using JWT (HttpOnly cookies)
+* Clean REST API design
+* Role‑based access control
+* Transaction‑safe business logic
+* Production‑ready backend structure
 
 ---
 
 ## 🚀 Features Implemented
 
-### ✅ Authentication
+### 🔐 Authentication & Authorization
 
 * User registration and login
-* Password hashing using bcrypt
-* JWT-based authentication
-* JWT stored securely in **HttpOnly cookies**
-* Protected routes using authentication middleware
+* JWT authentication using **HttpOnly cookies**
+* Secure logout
+* Protected routes
+* Role‑based access control (Client / Freelancer)
 
-### ✅ Gig Management
+### 📄 Gig Management
 
-* Create gigs (jobs)
+* Create a gig (Client only)
 * Fetch all open gigs
 * Search gigs by title
-* Gig ownership enforcement
-* Gig status lifecycle: `open → assigned`
+* Gig status management (open / in‑progress / closed)
 
-### ✅ Bidding System
+### 💰 Bidding System
 
-* Submit bids on open gigs
-* Prevent bidding on own gig
-* Prevent duplicate bids by same user
-* View bids for a gig (owner-only access)
-* Bid status lifecycle: `pending → hired / rejected`
+* Freelancers can place bids on open gigs
+* Clients can view all bids on their gigs
+* Bid status tracking (pending / accepted / rejected)
 
-### ✅ Hiring Logic (Core Highlight)
+### 🤝 Atomic Hiring Logic (Core Requirement)
 
-* Hire exactly **one** freelancer per gig
-* Atomic hiring flow using **MongoDB Transactions**
-* Automatically rejects all other bids
-* Prevents race conditions (double hiring)
-* Strict authorization (only gig owner can hire)
+* Only **one bid can be hired per gig**
+* Implemented using **MongoDB transactions**
+* Prevents race conditions when multiple hire requests occur
+* Automatically updates:
+
+  * Gig status
+  * Selected bid status
+  * Rejection of other bids
+
+### 🧑‍💻 Frontend (React)
+
+* Login & Register pages
+* Role‑based dashboard UI
+* Search gigs functionality
+* Bid submission UI
+* View bids per gig
+* Logout support
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-**Backend**
+### Backend
 
 * Node.js
 * Express.js
-* MongoDB
-* Mongoose
+* MongoDB + Mongoose
+* JWT Authentication
+* MongoDB Transactions
 
-**Authentication & Security**
+### Frontend
 
-* JWT (JSON Web Tokens)
-* HttpOnly Cookies
-* bcryptjs
+* React (Vite)
+* Redux Toolkit
+* Axios
+* React Router
+
+### Deployment
+
+* Backend: Render
+* Frontend: Vercel
+* Database: MongoDB Atlas
 
 ---
 
-## 📁 Project Structure
+## 📂 Backend Folder Structure
 
 ```
 backend/
-│
-├── src/
-│   ├── config/          # Database connection
-│   ├── models/          # Mongoose models (User, Gig, Bid)
-│   ├── controllers/     # Business logic
-│   ├── routes/          # API routes
-│   ├── middlewares/     # Auth middleware
-│   └── app.js           # Express app setup
-│
-├── server.js            # Server entry point
-├── .env.example         # Environment variables template
-├── package.json
-└── README.md
+│── controllers/
+│── models/
+│── routes/
+│── middleware/
+│── config/
+│── index.js
+│── package.json
 ```
 
 ---
 
-## 🔐 Environment Variables
+## 🔑 Environment Variables
 
-Create a `.env` file in the backend root and configure the following:
+### Backend (`.env`)
 
 ```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
+NODE_ENV=production
+PORT=5000
 ```
 
-A `.env.example` file is provided for reference.
+### Frontend (`.env`)
+
+```
+VITE_API_URL=your_backend_api_url
+```
 
 ---
 
-## ▶️ Running the Project Locally
+## 🔒 Security Considerations
 
-1. Clone the repository
+* JWT stored in **HttpOnly cookies** (not accessible via JavaScript)
+* CORS configured with credentials support
+* No sensitive data stored in localStorage
+* Backend enforces authorization regardless of frontend state
 
-```bash
-git clone <repository-url>
-```
+---
 
-2. Navigate to backend folder
+## ⚠️ Known Limitation
+
+* Authentication state resets on browser refresh since Redux state is in‑memory. This can be enhanced by adding an `/auth/me` endpoint to rehydrate user state.
+
+---
+
+## ▶️ How to Run Locally
+
+### Backend
 
 ```bash
 cd backend
-```
-
-3. Install dependencies
-
-```bash
 npm install
-```
-
-4. Start the development server
-
-```bash
 npm run dev
 ```
 
-Server will run on:
+### Frontend
 
+```bash
+cd frontend
+npm install
+npm run dev
 ```
-http://localhost:5000
-```
 
 ---
 
-## 📌 API Endpoints
+## ✅ Assignment Completion Status
 
-### Auth
-
-* `POST /api/auth/register` – Register user
-* `POST /api/auth/login` – Login user
-
-### Gigs
-
-* `GET /api/gigs` – Fetch open gigs (with search)
-* `POST /api/gigs` – Create a gig (authenticated)
-
-### Bids
-
-* `POST /api/bids` – Submit a bid
-* `GET /api/bids/:gigId` – View bids for a gig (owner only)
-* `PATCH /api/bids/:bidId/hire` – Hire a freelancer (atomic)
-
----
-
-## ⭐ Key Learning Outcomes
-
-* Secure authentication using HttpOnly cookies
-* Designing relational data models in MongoDB
-* Enforcing authorization and ownership rules
-* Implementing atomic operations using MongoDB transactions
-* Preventing race conditions in real-world backend systems
-
----
-
-## 🎯 Assignment Status
-
-* ✅ Core requirements completed
-* ⏳ Frontend integration (pending)
-* ⏳ Socket.io real-time notifications (bonus)
+* All required backend functionalities implemented
+* Atomic hiring logic completed
+* Search and role‑based UI implemented
+* Secure authentication flow implemented
+* Project deployed and submission‑ready
 
 ---
 
 ## 👤 Author
 
-**Arsalan Mohd**
-Backend Developer | MERN Stack
+**Mohd Arsalan**
 
 ---
 
-## 📄 License
+## 📝 Final Note
 
-This project is created for assessment and learning purposes.
+This project was developed strictly following the assignment requirements with a focus on correctness, security, and production‑ready architecture.
